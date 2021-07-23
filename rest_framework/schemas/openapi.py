@@ -652,6 +652,18 @@ class AutoSchema(ViewInspector):
         else:
             item_schema = self._get_reference(serializer)
 
+        if method == 'PATCH':
+            return {
+                'content': {
+                    ct: {'schema': {
+                        'type': 'object',
+                        'properties': {
+                            '$ref': item_schema['$ref'] + '/properties'
+                        }
+                    }}
+                    for ct in self.request_media_types
+                }
+            }
         return {
             'content': {
                 ct: {'schema': item_schema}
